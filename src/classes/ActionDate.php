@@ -5,12 +5,14 @@ class ActionDate
     public $curr_day;
     public $curr_month;
     public $curr_year;
+    public $curr_date;
     public $month_length;
     public $days_to_end = 0;
 
     public function __construct($date = null)
     {
         $curr_date = $this->getCurrentDate($date);
+        $this->curr_date = $curr_date;
         $this->curr_day = date('j', $curr_date);
         $this->curr_month = date('n', $curr_date);
         $this->curr_year = date('Y', $curr_date);
@@ -55,7 +57,7 @@ class ActionDate
         return $output;
     }
 
-    public function getActionDate()
+    public function getActionDateEveryMonth()
     {
         $last_day_month = $this->getLastDayCurrMonth();
         if ($this->curr_day < ($last_day_month['day'] - $this->days_to_end)) {
@@ -63,6 +65,23 @@ class ActionDate
         } else {
             return $this->getLastDayNextMonth();
         }
+    }
+
+    public function getActionDateEveryWeek($endDay = 1){
+        $currDayWeek = date('N',$this->curr_date);
+        if($currDayWeek >= $endDay){
+            $daysToEnd = 7 - ($currDayWeek - $endDay);
+        }else{
+            $daysToEnd = $endDay - $currDayWeek;
+        }
+        //$destinyDate = time() + $daysToEnd * 24*60*60;
+        $destinyDate = $this->curr_date + $daysToEnd * 24*60*60;
+        $output = array(
+            'day' => date('j', $destinyDate),
+            'month' => date('n', $destinyDate),
+            'year' => date('Y', $destinyDate)
+        );
+        return $output;
     }
 
 }
